@@ -2,13 +2,19 @@
   "name": "devtinder",
   "version": "1.0.0",
   "description": "social app for developers",
-  "main": "index.js",
+  "main": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node D:/code/namaste-node-code/devTinder/src/app.js",
+     "dev": "nodemon D:/code/namaste-node-code/devTinder/src/app.js"
   },
   "author": "Aman Yadav",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "mongoose": "^8.8.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }
