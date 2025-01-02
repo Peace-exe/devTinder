@@ -65,19 +65,22 @@ const userSchema = new mongoose.Schema({ //"new" keyword is not mandatory there
     },
     skills:{
         type:[String],
-        validate(arr){
-            if(arr.length<10){
-
-                if(arr.every((skill)=>( skill.length>20 ))){
+        
+        validate:{
+            validator(arr){
+                if(arr.length>10){
+                    throw new Error("skills cannot be more than 10.")
+                }
+                else if(arr.some((skill)=>(skill.length>20))){
                     throw new Error("skills cannot exceed 20 characters.");
                 }
+                else{
+                    return true; //validation passed
+                }
             }
-            else{
-                throw new Error("Can't include skills more than 10.");
-            }
-            
         }
-
+        
+        
     }
 
 },

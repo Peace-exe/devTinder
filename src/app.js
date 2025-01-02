@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const connectDB= require("./config/database"); //only after requirng this file here you will be able to connect to the db
 const User = require("./models/user");
+const {validateSignUpData}= require('./utils/helperValidator');
+const bcrypt= require('bcrypt');
+const validator= require('validator');
 PORT=7777;
 
 app.use(express.json()); //every json that comes from frontend will be converted to js object.this function will work on every route.
@@ -19,15 +22,33 @@ app.post("/signup", async (req,res)=>{
     }); 
     */
 
-    //now it can handle incoming data from the frontend and save it in the DB hence it is now dynamic
-    const user = new User(req.body);
+    
     
 
     try{
+        //1.validation of user data
+        validateSignUpData(req);
+        const {firstName,lastName,email,password}=req.body;
+
+        //2.encrypting password
+        const passwordHash= await bcrypt.hash(password,10);
+
+        //3.creating the new instance of the model
+        //now it can handle incoming data from the frontend and save it in the DB hence it is now dynamic
+
+
+        //const user = new User(req.body);
+        const user = new User({
+            firstName,
+            lastName,
+            email,
+            password:passwordHash
+
+        });
         await user.save(); //saving the User instance to our DB //this function returns a promise
         res.send("data saved successfully!!");
     }catch(err){
-        res.status(400).send("error occured while saving to DB. "+ err.message);
+        res.status(400).send("error occured while saving to DB.\n ERROR: "+ err.message);
     }
     
 
@@ -54,6 +75,39 @@ app.get("/user",
     
     }
 );
+
+//login API
+app.get("/login",
+    async (req,res)=>{
+
+        try{
+            const {email,password}= req.body;
+
+            if(!validator.isEmail(email)){
+                throw new Error("Invalid Credentials");
+            }
+            else{
+                const userData = await User.findOne({email:email});
+                
+                if(!userData){
+                    throw new Error("Invalid Credentials");
+                }
+
+                bcrypt.compare(password, userData.password, (err, result)=> {
+                    if(!result){
+                        throw new Error("Invalid credentials");
+                    }
+                    else{
+                        res.send(userData);
+                    }
+                });
+            }
+        }catch(err){
+            res.status(400).send("Invalid Credentials");
+        }
+        
+
+});
 
 //feed API: to fetch all the users from the DB 
 app.get("/feed",
