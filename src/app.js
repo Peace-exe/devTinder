@@ -81,7 +81,7 @@ app.get("/user",
 );
 
 //login API
-app.get("/login",
+app.post("/login",
     async (req,res)=>{
 
         try{
