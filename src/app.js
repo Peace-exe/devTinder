@@ -5,10 +5,14 @@ const User = require("./models/user");
 const {validateSignUpData}= require('./utils/helperValidator');
 const bcrypt= require('bcrypt');
 const validator= require('validator');
-PORT=7777;
+const cookieParser=require("cookie-parser");
+const jwt=require("jsonwebtoken");
+const {userAuth}= require("./middlewares/auth");
+const PORT=7777;
+const JWTPRIVATEKEY="@DEVTINDER$730";
 
 app.use(express.json()); //every json that comes from frontend will be converted to js object.this function will work on every route.
-
+app.use(cookieParser()); // every time a
 app.post("/signup", async (req,res)=>{ 
 
     //creating a new instance of the User model
@@ -81,24 +85,34 @@ app.get("/login",
     async (req,res)=>{
 
         try{
+            
             const {email,password}= req.body;
 
             if(!validator.isEmail(email)){
                 throw new Error("Invalid Credentials");
             }
             else{
-                const userData = await User.findOne({email:email});
+                const userData = await User.findOne({email:email}); //logged in user
                 
                 if(!userData){
                     throw new Error("Invalid Credentials");
                 }
 
-                bcrypt.compare(password, userData.password, (err, result)=> {
+                bcrypt.compare(password, userData.password, async (err, result)=> {
                     if(!result){
                         throw new Error("Invalid credentials");
                     }
                     else{
-                        res.send(userData);
+                        //create a jwt token 
+                        const jwtToken=await jwt.sign({_id:userData._id}, JWTPRIVATEKEY, {
+                            expiresIn:"1d"
+                        });
+
+                        res.cookie("token",jwtToken, {
+                            expires:new Date(Date.now()+24*3600000)
+                        });
+                        res.send("login successful.");
+                        console.log(res);
                     }
                 });
             }
@@ -109,6 +123,22 @@ app.get("/login",
 
 });
 
+//profile API : validates the token inside the cookie then sends user data to the client side(using auth middleware) 
+app.get("/profile",
+    userAuth,
+    async (req,res)=>{
+
+        try {
+            
+            const userData= req.user;
+
+            res.send(userData);
+        } catch (err) {
+            res.status(400).send("something went wrong \nERROR: " + err.message);
+        }
+
+    }
+);
 //feed API: to fetch all the users from the DB 
 app.get("/feed",
     async (req,res)=>{
@@ -191,6 +221,13 @@ app.patch("/user/:userId",
         
     }
 
+);
+
+app.post("/sendConnectionReq",userAuth,
+    (req,res)=>{
+        const user= req.user;
+        res.send(user.firstName+" sent a request!");
+    }
 );
 connectDB()
     .then(()=>{
