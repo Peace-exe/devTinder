@@ -98,23 +98,39 @@ app.post("/login",
                     throw new Error("Invalid Credentials");
                 }
 
+                const isPasswordValid = await userData.validatePassword(password);
+
+                if(!isPasswordValid){
+                    throw new Error("Invalid credentials");
+                }
+                else{
+                    //create a jwt token 
+                    const token= await userData.getJWT();
+
+                    res.cookie("token",token, {
+                        expires:new Date(Date.now()+24*3600000)
+                    });
+                    res.send("login successful.");
+                    
+                }
+
+                /*
                 bcrypt.compare(password, userData.password, async (err, result)=> {
                     if(!result){
                         throw new Error("Invalid credentials");
                     }
                     else{
                         //create a jwt token 
-                        const jwtToken=await jwt.sign({_id:userData._id}, JWTPRIVATEKEY, {
-                            expiresIn:"1d"
-                        });
+                        const token= await userData.getJWT();
 
-                        res.cookie("token",jwtToken, {
+                        res.cookie("token",token, {
                             expires:new Date(Date.now()+24*3600000)
                         });
                         res.send("login successful.");
                         console.log(res);
                     }
                 });
+                */
             }
         }catch(err){
             res.status(400).send("Invalid Credentials");
