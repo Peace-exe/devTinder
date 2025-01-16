@@ -4,6 +4,7 @@ const ConnectionRequest = require('../models/connectionRequest');
 const User = require('../models/user');
 const requestRouter = express.Router();
 
+//sending the connection request
 requestRouter.post("/request/send/:status/:toUserId",userAuth,
     async (req,res)=>{
 
@@ -65,6 +66,7 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,
     }
 );
 
+//reviewing the connection request
 requestRouter.post("/request/review/:status/:requestId",
     userAuth,
     async (req,res)=>{
