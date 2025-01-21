@@ -68,3 +68,5 @@ userRouter.get("/user/connections",userAuth,
         }
     }
 );
+
+module.exports= userRouter;

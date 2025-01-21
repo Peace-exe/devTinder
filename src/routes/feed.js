@@ -1,10 +1,14 @@
 const express = require('express');
 const User = require('../models/user');
 const feedRouter= express.Router();
+const userAuth = require('../middlewares/auth');
+
 
 //feed API: to fetch all the users from the DB 
-feedRouter.get("/feed",
+feedRouter.get("/feed",userAuth,
     async (req,res)=>{
+        
+        const loggedInUser = req.user;
 
         try{
 
