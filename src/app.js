@@ -2,8 +2,10 @@ const express = require("express");
 const app = express();
 const connectDB= require("./config/database"); //only after requirng this file here you will be able to connect to the db
 const cookieParser=require("cookie-parser");
+const cors = require("cors");
 const PORT=7777;
 
+app.use(cors());
 app.use(express.json()); //every json that comes from frontend will be converted to js object. this function will work on every route.
 app.use(cookieParser()); // every time a
 
