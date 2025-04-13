@@ -80,7 +80,11 @@ authRouter.post("/login",
                     res.cookie("token",token, {
                         expires:new Date(Date.now()+24*3600000)
                     });
-                    res.send("login successful.");
+                    
+                    const {_id,firstName,lastName,email,photoURL,about,skills,createdAt}= userData;
+                    const relevantUserInfo = {_id,firstName,lastName,email,photoURL,about,skills,createdAt}
+                    
+                    res.send(relevantUserInfo);
                     
                 }
 
