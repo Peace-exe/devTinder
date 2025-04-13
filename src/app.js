@@ -5,7 +5,10 @@ const cookieParser=require("cookie-parser");
 const cors = require("cors");
 const PORT=7777;
 
-app.use(cors());
+app.use(cors({
+    origin:"http://localhost:5173/",
+    credentials:true
+}));  //whitelisting the frontend domain
 app.use(express.json()); //every json that comes from frontend will be converted to js object. this function will work on every route.
 app.use(cookieParser()); // every time a
 
