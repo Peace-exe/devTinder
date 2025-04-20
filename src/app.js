@@ -10,7 +10,7 @@ app.use(cors({
     credentials:true
 }));  //whitelisting the frontend domain
 app.use(express.json()); //every json that comes from frontend will be converted to js object. this function will work on every route.
-app.use(cookieParser()); // every time a
+app.use(cookieParser()); 
 
 const authRouter = require('./routes/auth');
 const profileRouter = require('./routes/profile');

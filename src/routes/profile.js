@@ -12,7 +12,9 @@ profileRouter.get("/profile/view",
 
         try {
             
-            const userData= req.user;
+            const {_id,firstName,lastName,email,photoURL,about,skills,createdAt}= req.user;//getting the relevant info only.
+            
+            const userData = {_id,firstName,lastName,email,photoURL,about,skills,createdAt};
 
             res.send(userData);
         } catch (err) {
