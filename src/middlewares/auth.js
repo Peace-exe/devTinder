@@ -7,7 +7,7 @@ const userAuth= async (req,res,next)=>{
         //read the cookie from the request
         const {token}=req.cookies;
         if(!token){
-            throw new Error("token expired. try logging in again.");
+            return res.status(401).send("User not authorised. Please login.");
         }
 
         //verify the token
