@@ -18,11 +18,11 @@ const requestRouter= require('./routes/request.js');
 const feedRouter=require('./routes/feed.js');
 const userRouter = require('./routes/user.js');
 
-app.use("/", authRouter);
-app.use("/",profileRouter);
-app.use("/",requestRouter);
-app.use("/",feedRouter);
-app.use("/",userRouter);
+app.use("", authRouter);
+app.use("",profileRouter);
+app.use("",requestRouter);
+app.use("",feedRouter);
+app.use("",userRouter);
 
 connectDB()
     .then(()=>{
