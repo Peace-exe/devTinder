@@ -113,7 +113,7 @@ authRouter.post("/login",
 
 });
 
-authRouter.post("logout",
+authRouter.post("/logout",
     (req,res)=>{
         res
         .cookie("token",null,{
