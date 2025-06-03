@@ -25,56 +25,40 @@ profileRouter.get("/profile/view",
 );
 
 //edit user info
-profileRouter.patch("/profile/edit",userAuth,
-    async (req,res)=>{
-        const userId= req.user?._id;
-        const newData = req.body;
-        ALLOWED_UPDATES=[
-            
-            "age",
-            "gender",
-            "photoURL",
-            "about",
-            "skills"
-        ];
+profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
+  const userId   = req.user?._id;
+  const newData  = req.body;
 
-        try {
-            /*in below line, Object.keys(data) returns an array of keys present the js object(stored in data) then that array is compared with 
-             * ALLOWED_UPDATES array. lets break it down
-                const dataArray=Object.keys(data);
-                const isUpdateAllowed= dataArray.every(k => ALLOWED_UPDATES.includes(k));
+  const ALLOWED_UPDATES = ["age", "gender", "photoURL", "about", "skills"];
 
-                every() function works on arrays, takes a callback to check if each element in the array pass that check.
-             */
-            const isUpdateAllowed= Object.keys(newData).every(k => ALLOWED_UPDATES.includes(k));
+  try {
+    // 1️⃣ Block unexpected keys
+    const isUpdateAllowed = Object.keys(newData)
+      .every(k => ALLOWED_UPDATES.includes(k));
+    if (!isUpdateAllowed) throw new Error("Update not allowed");
 
-            if(!isUpdateAllowed){
-                throw new Error("update not allowed.");
-            }
+    // 2️⃣ Skills array constraints
+    if (newData.skills) {
+      if (newData.skills.length > 10)
+        throw new Error("Can't include more than 10 skills");
 
-            if(newData?.skills.length<10){
-
-                if(newData?.skills.every((skill)=>( skill.length>20 ))){
-                    throw new Error("skills cannot exceed 20 characters.");
-                }
-            }
-            else{
-                throw new Error("Can't include skills more than 10.");
-            }
-
-
-            const user = await User.findByIdAndUpdate({_id:userId},newData,{
-                /* options */ 
-                returnDocument:"before",
-                runValidators:true
-            });// can also write (userId,data)
-            res.send("User info updated successfully.")
-        } catch (err) {
-            res.status(400).send(err,"something went wrong updating the user info.");
-        }
-
+      if (newData.skills.some(skill => skill.length > 20))
+        throw new Error("Each skill must be ≤ 20 characters");
     }
-)
+
+    // 3️⃣ Update & return fresh doc
+    const user = await User.findByIdAndUpdate(
+      userId,
+      newData,
+      { new: true, runValidators: true }          // new:true === returnDocument:"after"
+    ).select("-password");
+
+    res.json({ message: "Profile updated successfully", data: user });
+  } catch (err) {
+    res.status(400).send(err.message || "Something went wrong updating user info");
+  }
+});
+
 
 //forgot password api
 profileRouter.patch("/profile/forgotPassword",userAuth,
