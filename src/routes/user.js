@@ -62,7 +62,7 @@ userRouter.get("/user/connections",userAuth,
                 return row.fromUserId;
             });
             
-
+            res.json({data});
         } catch (err) {
             res.status(400).json({message:err.message})
         }
