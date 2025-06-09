@@ -29,7 +29,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   const userId   = req.user?._id;
   const newData  = req.body;
 
-  const ALLOWED_UPDATES = ["age", "gender", "photoURL", "about", "skills"];
+  const ALLOWED_UPDATES = ["firstName","lastName","age", "gender", "about"];
 
   try {
     // 1️⃣ Block unexpected keys
