@@ -40,7 +40,7 @@ feedRouter.get("/feed", userAuth, async (req, res) => {
       page,
       limit,
       count: visibleUsers.length,
-      feeddata: visibleUsers
+      feedData: visibleUsers
     });
 
   } catch (err) {
