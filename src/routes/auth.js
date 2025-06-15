@@ -42,8 +42,14 @@ authRouter.post("/signup", async (req,res)=>{
             password:passwordHash
 
         });
-        await user.save(); //saving the User instance to our DB //this function returns a promise
-        res.send("data saved successfully!!");
+        const newUserData= await user.save(); //saving the User instance to our DB //this function returns a promise
+        const userObj = newUserData.toObject();
+        delete userObj.password;
+        
+        res.status(201).json({
+            message:"data saved successfully!!",
+            data:userObj
+        });
     }catch(err){
         res.status(400).send("error occured while saving to DB.\n ERROR: "+ err.message);
     }
