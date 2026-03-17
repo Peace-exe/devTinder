@@ -87,10 +87,7 @@ authRouter.post("/login",
                         expires:new Date(Date.now()+24*3600000)
                     });
                     
-                    const {_id,firstName,lastName,email,photoURL,about,skills,createdAt}= userData;
-                    const relevantUserInfo = {_id,firstName,lastName,email,photoURL,about,skills,createdAt}
                     
-                    res.send(relevantUserInfo);
                     
                 }
 
